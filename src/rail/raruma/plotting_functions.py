@@ -1,12 +1,25 @@
 import numpy as np
 from matplotlib.figure import Figure
+
 import matplotlib.pyplot as plt
-from matplotlib import colors
+from matplotlib import colors, cm
 from scipy.stats import sigmaclip
 from astropy.stats import biweight_location, biweight_scale
 
-def get_nrow_ncol(nfig: int) -> tuple[int, int]:
 
+def get_subplot_nrow_ncol(nfig: int) -> tuple[int, int]:
+    """ Get the number of rows and columns of sub-plots
+    for a particular number of plots
+
+    Parameters
+    ----------
+    nfig: 
+        Number of figures
+
+    Returns
+    -------
+    Number of rows and columns as (nrow, ncol)
+    """    
     shape_dict = {
         1: (1, 1),
         2: (1, 2),
@@ -33,7 +46,22 @@ def get_nrow_ncol(nfig: int) -> tuple[int, int]:
 
 
 def plot_feature_histograms(data, labels: list[str]|None = None) -> Figure:
+    """Plot Histograms of the features being used to train 
+    a ML algorithm on a single, busy figure
 
+    Parameters
+    ----------
+    data:
+        Input data
+
+    labels:
+        Labels for the various features
+
+
+    Returns
+    -------
+    Figure with requested plots
+    """
     fig = plt.figure(figsize=(8, 8))
     n_features = data.shape[-1]
     nrow, ncol = get_nrow_ncol(n_features)    
@@ -51,7 +79,17 @@ def plot_feature_histograms(data, labels: list[str]|None = None) -> Figure:
 
 
 def plot_true_nz(targets) -> Figure:
-    
+    """Plot the true NZ 
+
+    Parameters
+    ----------
+    targets:
+        Input data
+
+    Returns
+    -------
+    Figure with requested plot
+    """    
     fig = plt.figure(figsize=(8, 8))
     ax = fig.subplots(1, 1)
     ax.hist(targets, bins=100)
@@ -59,10 +97,33 @@ def plot_true_nz(targets) -> Figure:
 
 
 def plot_pca_hist2d(data, pca_out, labels: list[str]|None = None) -> Figure:
+    """Plot input data v. principle componment analysis features
+
+    Parameters
+    ----------
+    data:
+        Input data
+
+    pca_out:
+        Output of principle compoments analysis
+    
+    lables:
+        Labels for the data columns
+
+    Returns
+    -------
+    Figure with requested plots
+
+
+    Notes
+    -----
+    This will create N_features X N_components sub-plots
+    """    
 
     fig = plt.figure(figsize=(8, 8))
     n_features = data.shape[-1]
-    nrow, ncol = n_features, n_features
+    n_comps = pca_out.shape[-1]
+    nrow, ncol = n_features, n_comps
     axs = fig.subplots(nrow, ncol)
 
     for irow in range(nrow):
@@ -77,6 +138,27 @@ def plot_pca_hist2d(data, pca_out, labels: list[str]|None = None) -> Figure:
 
 
 def plot_feature_target_hist2d(data, targets, labels: list[str]|None = None) -> Figure:
+    """Plot input data v. target redshift value as 2D histogram
+
+    Parameters
+    ----------
+    data:
+        Input data [N_objects, N_features]
+
+    targets:
+        Target redshirt [N_objects]
+    
+    lables:
+        Labels for the data columns [N_features]
+
+    Returns
+    -------
+    Figure with requested plots
+
+    Notes
+    -----
+    This will create N_features sub-plots
+    """    
 
     fig = plt.figure(figsize=(8, 8))
     n_features = data.shape[-1]
@@ -95,7 +177,27 @@ def plot_feature_target_hist2d(data, targets, labels: list[str]|None = None) -> 
 
 
 def plot_features_target_scatter(data, targets, labels: list[str]|None = None) -> Figure:
+    """Plot input data v. target redshift value as colored scatter plot
 
+    Parameters
+    ----------
+    data:
+        Input data [N_objects, N_features]
+
+    targets:
+        Target redshirt [N_objects]
+    
+    lables:
+        Labels for the data columns [N_features]
+
+    Returns
+    -------
+    Figure with requested plots
+
+    Notes
+    -----
+    This will create N_features sub-plots
+    """
     fig = plt.figure(figsize=(8, 8))
     n_features = data.shape[-1]
     nrow, ncol = n_features, n_features
@@ -112,8 +214,21 @@ def plot_features_target_scatter(data, targets, labels: list[str]|None = None) -
     return fig
 
 
-def plot_true_predict(targets, predictions) -> Figure:
+def plot_true_predict_simple(targets, predictions) -> Figure:
+    """Plot predicted redshift v. true redshift as a 2d histogram
 
+    Parameters
+    ----------
+    targets:
+        Target redshifts [N_objects]
+    
+    predictions:
+        Predicted redshifts [N_objects]
+
+    Returns
+    -------
+    Figure with requested plots
+    """
     fig = plt.figure(figsize=(8, 8))
     ax = fig.subplots(1, 1)
     ax.hist2d(targets, predictions, bins=(100, 100), norm='log')
@@ -311,4 +426,20 @@ def plot_biweight_stats_v_redshift(targets, predictions) -> Figure:
     axes[1].set_xlabel("Redshift")
     axes[1].set_ylabel(r"$(z_{phot} - z_{spec})/(1+z_{spec})$")
     return figure
-    
+
+
+
+def plot_mag_spectra(
+    x_vals: np.ndarray,
+    y_vals: np.ndarray,
+    y_errs: np.ndarray,
+    targets: np.ndarray,
+) -> Figure:
+
+    figure, axes = plt.subplots(1, 1, figsize=(8, 6))
+
+    for y_, yerr_, target_ in zip(y_vals, y_errs, targets):
+        axes.errorbar(x_vals, y_, yerr_, color=cm.rainbow(target_))
+
+    return figure
+                          
