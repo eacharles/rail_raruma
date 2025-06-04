@@ -1,7 +1,7 @@
 from typing import Any
 import numpy as np
 from numpy.polynomial import Polynomial
-
+from rail.utils.path_utils import find_rail_file
 
 def make_band_names(template: str, bands: list[str]) -> list[str]:
     """Make a set of band names from template and a list of bands
@@ -233,8 +233,40 @@ def color_excess(
         color_excess_list.append(0.5*(mags[:,i-1] + mags[:,i+1]) - mags[:,i])
 
     return np.array(color_excess_list).T
-        
-    
+
+
+def build_template_dict(
+    seds: list[str],
+    filters: list[str]
+)  -> dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]]:
+    """Extract AB templates
+
+    Parameters
+    ----------
+    seds:
+        Names of the seds to use
+
+    filters:
+        Name of the filters to use
+
+    Returns
+    -------
+    Dict mapping sed name to a tuple with
+    redshifts (N), mags (N, N_filter), colors (N, N_filter-1), sed_index
+    """
+    template_dict = {}
+    for ised, sed in enumerate(seds):
+        mag_data_list = []
+        for filter in filters:
+            path = find_rail_file(f'examples_data/estimation_data/data/AB/{sed}.{filter}.AB')
+            data = np.loadtxt(path)
+            _redshifts = data[:,0]
+            mags = fluxes_to_mags(data[:,1], 31.4)
+            mag_data_list.append(mags)
+        mag_data = np.vstack(mag_data_list).T
+        color_data = adjacent_band_colors(mag_data).T
+        template_dict[sed] = (_redshifts, mag_data, color_data, ised)
+    return template_dict
 
 
 def prepare_data_total_mag_and_colors(
@@ -267,7 +299,10 @@ def prepare_data_total_mag_and_colors(
     mag_total = fluxes_to_mags(total_fluxes, 31.4)
     mag_total = np.nan_to_num(mag_total, 25.0)
     colors = adjacent_band_colors(np.nan_to_num(mags, 27.0)).clip(-2, 2)
-    targets = input_data['redshift']
+    try:
+        targets = input_data['redshift']
+    except KeyError:
+        targets = None
     features = np.vstack([mag_total, colors.T]).T
     return (targets, features)
 

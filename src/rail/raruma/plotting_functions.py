@@ -64,7 +64,7 @@ def plot_feature_histograms(data, labels: list[str]|None = None) -> Figure:
     """
     fig = plt.figure(figsize=(8, 8))
     n_features = data.shape[-1]
-    nrow, ncol = get_nrow_ncol(n_features)    
+    nrow, ncol = get_subplot_nrow_ncol(n_features)    
     axs = fig.subplots(nrow, ncol)
 
     for ifeature in range(n_features):
@@ -162,7 +162,7 @@ def plot_feature_target_hist2d(data, targets, labels: list[str]|None = None) -> 
 
     fig = plt.figure(figsize=(8, 8))
     n_features = data.shape[-1]
-    nrow, ncol = get_nrow_ncol(n_features)    
+    nrow, ncol = get_subplot_nrow_ncol(n_features)    
     axs = fig.subplots(nrow, ncol)
 
     for ifeature in range(n_features):
@@ -177,7 +177,7 @@ def plot_feature_target_hist2d(data, targets, labels: list[str]|None = None) -> 
 
 
 def plot_features_target_scatter(data, targets, labels: list[str]|None = None) -> Figure:
-    """Plot input data v. target redshift value as colored scatter plot
+    """Plot input data v. target redshift value as scatter plot
 
     Parameters
     ----------
@@ -200,18 +200,61 @@ def plot_features_target_scatter(data, targets, labels: list[str]|None = None) -
     """
     fig = plt.figure(figsize=(8, 8))
     n_features = data.shape[-1]
-    nrow, ncol = n_features, n_features
+    nrow, ncol = get_subplot_nrow_ncol(n_features)    
+    axs = fig.subplots(nrow, ncol)
+
+    for ifeature in range(n_features):
+        irow = int(ifeature / ncol)
+        icol = ifeature % ncol
+
+        axs[irow][icol].scatter(targets, data[:,ifeature], marker='.', s=1)
+        if labels is not None:
+            axs[irow][0].set_ylabel(labels[ifeature]) 
+            
+    return fig
+
+
+def plot_features_pca_scatter(data, pca_out, targets, labels: list[str]|None = None) -> Figure:
+    """Plot input data v. pca with target redshift as color
+
+    Parameters
+    ----------
+    data:
+        Input data [N_objects, N_features]
+
+    pca_out:
+        PCA transformed data [N_objects, N_components]
+
+    targets:
+        Target redshirt [N_objects]
+    
+    lables:
+        Labels for the data columns [N_features]
+
+    Returns
+    -------
+    Figure with requested plots
+
+    Notes
+    -----
+    This will create N_features sub-plots
+    """
+    fig = plt.figure(figsize=(8, 8))
+    n_features = data.shape[-1]
+    n_components = pca_out.shape[-1]
+    nrow, ncol = n_features, n_components
     axs = fig.subplots(nrow, ncol)
 
     for irow in range(nrow):
-        row_data = data[irow]
+        row_data = data[:,irow]
         for icol in range(ncol):
-            col_data = pca_out[icol]
-            axs[irow][icol].scatter(row_data, col_data, c=targets, cmap='rainbow', marker='.', s=1)
-        if labels is not None:
-            axs[irow][0].set_xlabel(labels[ifeature]) 
+            axs[irow][icol].scatter(row_data, pca_out[:,icol], c=targets, marker='.', s=1)
+            if labels is not None:
+                axs[irow][0].set_xlabel(labels[ifeature]) 
             
     return fig
+
+
 
 
 def plot_true_predict_simple(targets, predictions) -> Figure:
@@ -300,6 +343,68 @@ def plot_true_predict_fancy(targets, predictions) -> Figure:
     cb.set_label("Density")
 
     plt.legend()
+
+
+def plot_colors_v_redshifts_with_templates(
+    redshifts: np.ndarray,
+    colors: np.ndarray,
+    zmax: float=4.0,
+    templates: dict|None=None,
+    labels: list[str]|None=None,    
+) -> Figure:
+    
+    fig = plt.figure(figsize=(8, 8))
+    n_colors = colors.shape[-1]
+    nrow, ncol = get_subplot_nrow_ncol(n_colors)    
+    axs = fig.subplots(nrow, ncol)
+
+    for icolor in range(n_colors):
+        icol = int(icolor / ncol)
+        irow = icolor % ncol
+        axs[icol][irow].scatter(redshifts, colors[:,icolor], color='black', s=1)
+        axs[icol][irow].set_xlim(0, zmax)
+        axs[icol][irow].set_ylim(-3., 3.)
+        if templates is not None:
+            for key, val in templates.items():
+                mask = val[0] < zmax
+                _ = axs[icol][irow].plot(val[0][mask], val[2][icolor][mask], label=key, c=cm.rainbow(1.-val[3]/len(templates)))
+        # axs[icol][irow].legend()
+        axs[icol][irow].set_xlabel("redshift")
+        if labels is not None:
+            axs[icol][irow].set_ylabel(labels[icolor])
+            
+    return fig
+   
+
+def plot_colors_v_colors_with_templates(
+    redshifts: np.ndarray,
+    colors: np.ndarray,
+    zmax: float=4.0,
+    templates: dict|None=None,
+    labels: list[str]|None=None,    
+) -> Figure:
+
+    fig = plt.figure(figsize=(8, 8))
+    n_colors = colors.shape[-1]
+    nrow, ncol = n_colors-1, n_colors-1
+    axs = fig.subplots(nrow, ncol)
+
+    for icol in range(n_colors-1):        
+        for irow in range(n_colors-1):
+            axs[icol][irow].set_xlim(-3., 3.)
+            axs[icol][irow].set_ylim(-3., 3.)
+            if labels is not None:
+                axs[icol][irow].set_ylabel(labels[icol])
+                axs[icol][irow].set_xlabel(labels[irow+1])
+            if irow < icol:
+                continue
+            axs[icol][irow].scatter(colors[:,icol], colors[:,irow+1], color='black', s=1)
+            if templates is not None:
+                for key, val in templates.items():
+                    mask = val[0] < zmax
+                    _ = axs[icol][irow].plot(val[2][icol][mask], val[2][irow+1][mask], label=key, c=cm.rainbow(1.-val[3]/len(templates)))
+            # axs[icol][irow].legend()
+    return fig
 
     
 def process_data(
