@@ -364,7 +364,7 @@ def plot_colors_v_redshifts_with_templates(
     for icolor in range(n_colors):
         icol = int(icolor / ncol)
         irow = icolor % ncol
-        axs[icol][irow].scatter(redshifts, colors[:,icolor], color='black', s=1)
+        axs[icol][irow].hist2d(redshifts, colors[:,icolor], bins=[np.linspace(0, zmax, 121), np.linspace(-3, 3, 121)], cmap='gray', norm='log')
         axs[icol][irow].set_xlim(0, zmax)
         axs[icol][irow].set_ylim(-3., 3.)
         if templates is not None:
