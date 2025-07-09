@@ -12,6 +12,13 @@ attic
 # C extensions
 *.so
 
+# figures & data
+examples/*.png
+examples/*.hdf5
+examples/*.fits
+examples/*.pq
+examples/*.pdf
+
 # Distribution / packaging
 .Python
 build/
