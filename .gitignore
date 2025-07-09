@@ -13,11 +13,11 @@ attic
 *.so
 
 # figures & data
-examples/*.png
-examples/*.hdf5
-examples/*.fits
-examples/*.pq
-examples/*.pdf
+*.png
+*.hdf5
+*.fits
+*.pq
+*.pdf
 
 # Distribution / packaging
 .Python
