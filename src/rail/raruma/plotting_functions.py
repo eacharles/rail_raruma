@@ -74,7 +74,8 @@ def plot_feature_histograms(data, labels: list[str]|None = None) -> Figure:
         axs[icol][irow].hist(data[:,ifeature], bins=100)
         if labels is not None:
             axs[icol][irow].set_xlabel(labels[ifeature])
-            
+
+    fig.tight_layout()
     return fig
 
 
@@ -93,6 +94,7 @@ def plot_true_nz(targets) -> Figure:
     fig = plt.figure(figsize=(8, 8))
     ax = fig.subplots(1, 1)
     ax.hist(targets, bins=100)
+    fig.tight_layout()    
     return fig
 
 
@@ -130,10 +132,10 @@ def plot_pca_hist2d(data, pca_out, labels: list[str]|None = None) -> Figure:
         row_data = data[:,irow]
         for icol in range(ncol):
             col_data = pca_out[:,icol]
-            axs[irow][icol].hist2d(row_data, col_data, bins=(100, 100), norm='log')
+            axs[irow][icol].hist2d(row_data, col_data, bins=(100, 100), norm='log', cmap='gray')
         if labels is not None:
             axs[irow][0].set_xlabel(labels[ifeature]) 
-            
+    fig.tight_layout()            
     return fig
 
 
@@ -169,10 +171,10 @@ def plot_feature_target_hist2d(data, targets, labels: list[str]|None = None) -> 
         icol = int(ifeature / ncol)
         irow = ifeature % ncol
 
-        axs[icol][irow].hist2d(targets, data[:,ifeature], bins=100)
+        axs[icol][irow].hist2d(targets, data[:,ifeature], bins=100, norm='log', cmap='gray')
         if labels is not None:
             axs[icol][irow].set_xlabel(labels[ifeature])
-            
+    fig.tight_layout()            
     return fig
 
 
@@ -210,7 +212,7 @@ def plot_features_target_scatter(data, targets, labels: list[str]|None = None) -
         axs[irow][icol].scatter(targets, data[:,ifeature], marker='.', s=1)
         if labels is not None:
             axs[irow][0].set_ylabel(labels[ifeature]) 
-            
+    fig.tight_layout()            
     return fig
 
 
@@ -251,7 +253,7 @@ def plot_features_pca_scatter(data, pca_out, targets, labels: list[str]|None = N
             axs[irow][icol].scatter(row_data, pca_out[:,icol], c=targets, marker='.', s=1)
             if labels is not None:
                 axs[irow][0].set_xlabel(labels[ifeature]) 
-            
+    fig.tight_layout()            
     return fig
 
 
@@ -274,7 +276,7 @@ def plot_true_predict_simple(targets, predictions) -> Figure:
     """
     fig = plt.figure(figsize=(8, 8))
     ax = fig.subplots(1, 1)
-    ax.hist2d(targets, predictions, bins=(100, 100), norm='log')
+    ax.hist2d(targets, predictions, bins=(100, 100), norm='log', cmap='gray')
     return fig
 
 
@@ -343,6 +345,7 @@ def plot_true_predict_fancy(targets, predictions) -> Figure:
     cb.set_label("Density")
 
     plt.legend()
+    figure.tight_layout()
 
 
 def plot_colors_v_redshifts_with_templates(
@@ -372,7 +375,8 @@ def plot_colors_v_redshifts_with_templates(
         axs[icol][irow].set_xlabel("redshift")
         if labels is not None:
             axs[icol][irow].set_ylabel(labels[icolor])
-            
+
+    fig.tight_layout()
     return fig
    
 
@@ -404,6 +408,7 @@ def plot_colors_v_colors_with_templates(
                     mask = val[0] < zmax
                     _ = axs[icol][irow].plot(val[2][icol][mask], val[2][irow+1][mask], label=key, c=cm.rainbow(1.-val[3]/len(templates)))
             # axs[icol][irow].legend()
+    fig.tight_layout()            
     return fig
 
     
@@ -530,6 +535,7 @@ def plot_biweight_stats_v_redshift(targets, predictions) -> Figure:
 
     axes[1].set_xlabel("Redshift")
     axes[1].set_ylabel(r"$(z_{phot} - z_{spec})/(1+z_{spec})$")
+    figure.tight_layout()
     return figure
 
 
@@ -545,6 +551,6 @@ def plot_mag_spectra(
 
     for y_, yerr_, target_ in zip(y_vals, y_errs, targets):
         axes.errorbar(x_vals, y_, yerr_, color=cm.rainbow(target_))
-
+    figure.tight_layout()
     return figure
                           
