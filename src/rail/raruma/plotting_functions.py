@@ -13,13 +13,13 @@ def get_subplot_nrow_ncol(nfig: int) -> tuple[int, int]:
 
     Parameters
     ----------
-    nfig: 
+    nfig:
         Number of figures
 
     Returns
     -------
     Number of rows and columns as (nrow, ncol)
-    """    
+    """
     shape_dict = {
         1: (1, 1),
         2: (1, 2),
@@ -46,7 +46,7 @@ def get_subplot_nrow_ncol(nfig: int) -> tuple[int, int]:
 
 
 def plot_feature_histograms(data, labels: list[str]|None = None) -> Figure:
-    """Plot Histograms of the features being used to train 
+    """Plot Histograms of the features being used to train
     a ML algorithm on a single, busy figure
 
     Parameters
@@ -64,7 +64,7 @@ def plot_feature_histograms(data, labels: list[str]|None = None) -> Figure:
     """
     fig = plt.figure(figsize=(8, 8))
     n_features = data.shape[-1]
-    nrow, ncol = get_subplot_nrow_ncol(n_features)    
+    nrow, ncol = get_subplot_nrow_ncol(n_features)
     axs = fig.subplots(nrow, ncol)
 
     for ifeature in range(n_features):
@@ -80,7 +80,7 @@ def plot_feature_histograms(data, labels: list[str]|None = None) -> Figure:
 
 
 def plot_true_nz(targets) -> Figure:
-    """Plot the true NZ 
+    """Plot the true NZ
 
     Parameters
     ----------
@@ -90,11 +90,11 @@ def plot_true_nz(targets) -> Figure:
     Returns
     -------
     Figure with requested plot
-    """    
+    """
     fig = plt.figure(figsize=(8, 8))
     ax = fig.subplots(1, 1)
     ax.hist(targets, bins=100)
-    fig.tight_layout()    
+    fig.tight_layout()
     return fig
 
 
@@ -108,7 +108,7 @@ def plot_pca_hist2d(data, pca_out, labels: list[str]|None = None) -> Figure:
 
     pca_out:
         Output of principle compoments analysis
-    
+
     lables:
         Labels for the data columns
 
@@ -120,7 +120,7 @@ def plot_pca_hist2d(data, pca_out, labels: list[str]|None = None) -> Figure:
     Notes
     -----
     This will create N_features X N_components sub-plots
-    """    
+    """
 
     fig = plt.figure(figsize=(8, 8))
     n_features = data.shape[-1]
@@ -134,8 +134,8 @@ def plot_pca_hist2d(data, pca_out, labels: list[str]|None = None) -> Figure:
             col_data = pca_out[:,icol]
             axs[irow][icol].hist2d(row_data, col_data, bins=(100, 100), norm='log', cmap='gray')
         if labels is not None:
-            axs[irow][0].set_xlabel(labels[ifeature]) 
-    fig.tight_layout()            
+            axs[irow][0].set_xlabel(labels[ifeature])
+    fig.tight_layout()
     return fig
 
 
@@ -149,7 +149,7 @@ def plot_feature_target_hist2d(data, targets, labels: list[str]|None = None) -> 
 
     targets:
         Target redshirt [N_objects]
-    
+
     lables:
         Labels for the data columns [N_features]
 
@@ -160,11 +160,11 @@ def plot_feature_target_hist2d(data, targets, labels: list[str]|None = None) -> 
     Notes
     -----
     This will create N_features sub-plots
-    """    
+    """
 
     fig = plt.figure(figsize=(8, 8))
     n_features = data.shape[-1]
-    nrow, ncol = get_subplot_nrow_ncol(n_features)    
+    nrow, ncol = get_subplot_nrow_ncol(n_features)
     axs = fig.subplots(nrow, ncol)
 
     for ifeature in range(n_features):
@@ -174,7 +174,7 @@ def plot_feature_target_hist2d(data, targets, labels: list[str]|None = None) -> 
         axs[icol][irow].hist2d(targets, data[:,ifeature], bins=100, norm='log', cmap='gray')
         if labels is not None:
             axs[icol][irow].set_xlabel(labels[ifeature])
-    fig.tight_layout()            
+    fig.tight_layout()
     return fig
 
 
@@ -188,7 +188,7 @@ def plot_features_target_scatter(data, targets, labels: list[str]|None = None) -
 
     targets:
         Target redshirt [N_objects]
-    
+
     lables:
         Labels for the data columns [N_features]
 
@@ -202,7 +202,7 @@ def plot_features_target_scatter(data, targets, labels: list[str]|None = None) -
     """
     fig = plt.figure(figsize=(8, 8))
     n_features = data.shape[-1]
-    nrow, ncol = get_subplot_nrow_ncol(n_features)    
+    nrow, ncol = get_subplot_nrow_ncol(n_features)
     axs = fig.subplots(nrow, ncol)
 
     for ifeature in range(n_features):
@@ -211,8 +211,8 @@ def plot_features_target_scatter(data, targets, labels: list[str]|None = None) -
 
         axs[irow][icol].scatter(targets, data[:,ifeature], marker='.', s=1)
         if labels is not None:
-            axs[irow][0].set_ylabel(labels[ifeature]) 
-    fig.tight_layout()            
+            axs[irow][0].set_ylabel(labels[ifeature])
+    fig.tight_layout()
     return fig
 
 
@@ -229,7 +229,7 @@ def plot_features_pca_scatter(data, pca_out, targets, labels: list[str]|None = N
 
     targets:
         Target redshirt [N_objects]
-    
+
     lables:
         Labels for the data columns [N_features]
 
@@ -252,8 +252,8 @@ def plot_features_pca_scatter(data, pca_out, targets, labels: list[str]|None = N
         for icol in range(ncol):
             axs[irow][icol].scatter(row_data, pca_out[:,icol], c=targets, marker='.', s=1)
             if labels is not None:
-                axs[irow][0].set_xlabel(labels[ifeature]) 
-    fig.tight_layout()            
+                axs[irow][0].set_xlabel(labels[ifeature])
+    fig.tight_layout()
     return fig
 
 
@@ -266,7 +266,7 @@ def plot_true_predict_simple(targets, predictions) -> Figure:
     ----------
     targets:
         Target redshifts [N_objects]
-    
+
     predictions:
         Predicted redshifts [N_objects]
 
@@ -284,7 +284,7 @@ def get_biweight_mean_sigma_outlier(subset: np.ndarray, nclip: int=3) -> tuple[f
     subset_clip, _, _ = sigmaclip(subset, low=3, high=3)
     for _j in range(nclip):
         subset_clip, _, _ = sigmaclip(subset_clip, low=3, high=3)
-        
+
     mean = biweight_location(subset_clip)
     std = biweight_scale(subset_clip)
     outlier_rate = np.sum(np.abs(subset) > 3 * biweight_scale(subset_clip)) / len(
@@ -353,12 +353,12 @@ def plot_colors_v_redshifts_with_templates(
     colors: np.ndarray,
     zmax: float=4.0,
     templates: dict|None=None,
-    labels: list[str]|None=None,    
+    labels: list[str]|None=None,
 ) -> Figure:
-    
+
     fig = plt.figure(figsize=(8, 8))
     n_colors = colors.shape[-1]
-    nrow, ncol = get_subplot_nrow_ncol(n_colors)    
+    nrow, ncol = get_subplot_nrow_ncol(n_colors)
     axs = fig.subplots(nrow, ncol)
 
     for icolor in range(n_colors):
@@ -378,14 +378,14 @@ def plot_colors_v_redshifts_with_templates(
 
     fig.tight_layout()
     return fig
-   
+
 
 def plot_colors_v_colors_with_templates(
     redshifts: np.ndarray,
     colors: np.ndarray,
     zmax: float=4.0,
     templates: dict|None=None,
-    labels: list[str]|None=None,    
+    labels: list[str]|None=None,
 ) -> Figure:
 
     fig = plt.figure(figsize=(8, 8))
@@ -393,7 +393,7 @@ def plot_colors_v_colors_with_templates(
     nrow, ncol = n_colors-1, n_colors-1
     axs = fig.subplots(nrow, ncol)
 
-    for icol in range(n_colors-1):        
+    for icol in range(n_colors-1):
         for irow in range(n_colors-1):
             axs[icol][irow].set_xlim(-3., 3.)
             axs[icol][irow].set_ylim(-3., 3.)
@@ -408,10 +408,10 @@ def plot_colors_v_colors_with_templates(
                     mask = val[0] < zmax
                     _ = axs[icol][irow].plot(val[2][icol][mask], val[2][irow+1][mask], label=key, c=cm.rainbow(1.-val[3]/len(templates)))
             # axs[icol][irow].legend()
-    fig.tight_layout()            
+    fig.tight_layout()
     return fig
 
-    
+
 def process_data(
     zphot: np.ndarray,
     specz: np.ndarray,
@@ -421,11 +421,11 @@ def process_data(
     nbin: int=101,
 ) -> dict[str, list[float]]:
     dz = (zphot - specz) / (1 + specz)
-    
+
     z_bins = np.linspace(low, high, nbin)
     # Bin the data
     bin_indices = np.digitize(zphot, bins=z_bins) - 1  # Assign each point to a bin
-    
+
     biweight_mean: list[float] = []
     biweight_std: list[float] = []
     biweight_sigma: list[float] = []
@@ -443,11 +443,11 @@ def process_data(
         subset_clip, _, _ = sigmaclip(subset, low=3, high=3)
         for _j in range(nclip):
             subset_clip, _, _ = sigmaclip(subset_clip, low=3, high=3)
-            
+
         biweight_mean.append(biweight_location(subset_clip))
         biweight_std.append(biweight_scale(subset_clip) / np.sqrt(len(subset_clip)))
         biweight_sigma.append(biweight_scale(subset_clip))
-        
+
         outlier_rate = np.sum(
             np.abs(subset) > 3 * biweight_scale(subset_clip)
         ) / len(subset)
@@ -458,7 +458,7 @@ def process_data(
         median.append(np.percentile(subset, 50))
         qt_68_high.append(np.percentile(subset, 84))
         qt_95_high.append(np.percentile(subset, 97.5))
-        
+
         z_mean.append(np.mean(zphot[bin_indices == i]))
     return {
         "z_mean": z_mean,
@@ -473,7 +473,7 @@ def process_data(
         "qt_95_high": qt_95_high,
     }
 
-    
+
 def plot_biweight_stats_v_redshift(targets, predictions) -> Figure:
 
     n_zbins = 100
@@ -482,7 +482,7 @@ def plot_biweight_stats_v_redshift(targets, predictions) -> Figure:
     n_clip = 3
 
     dz = (predictions - targets) / (1 + targets)
-    
+
     results = process_data(
         predictions,
         targets,
@@ -501,7 +501,7 @@ def plot_biweight_stats_v_redshift(targets, predictions) -> Figure:
         results["biweight_std"],
         label="Bias",
     )
-    
+
     axes[0].plot(results["z_mean"], results["biweight_sigma"], label=r"$\sigma_z$")
 
     axes[0].plot(
@@ -553,4 +553,3 @@ def plot_mag_spectra(
         axes.errorbar(x_vals, y_, yerr_, color=cm.rainbow(target_))
     figure.tight_layout()
     return figure
-                          
