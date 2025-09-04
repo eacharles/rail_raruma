@@ -8,7 +8,7 @@ from astropy.stats import biweight_location, biweight_scale
 
 
 def get_subplot_nrow_ncol(nfig: int) -> tuple[int, int]:
-    """ Get the number of rows and columns of sub-plots
+    """Get the number of rows and columns of sub-plots
     for a particular number of plots
 
     Parameters
@@ -41,11 +41,14 @@ def get_subplot_nrow_ncol(nfig: int) -> tuple[int, int]:
     try:
         return shape_dict[nfig]
     except KeyError:
-        raise ValueError(f"Sorry, Phillipe.  I'm not going to put {nfig} subplots in one figure") from None
+        raise ValueError(
+            f"Sorry, Phillipe.  I'm not going to put {nfig} subplots in one figure"
+        ) from None
 
 
-
-def plot_feature_histograms(data, labels: list[str]|None = None) -> Figure:
+def plot_feature_histograms(
+    data: np.ndarray, labels: list[str] | None = None
+) -> Figure:
     """Plot Histograms of the features being used to train
     a ML algorithm on a single, busy figure
 
@@ -71,7 +74,7 @@ def plot_feature_histograms(data, labels: list[str]|None = None) -> Figure:
         icol = int(ifeature / ncol)
         irow = ifeature % ncol
 
-        axs[icol][irow].hist(data[:,ifeature], bins=100)
+        axs[icol][irow].hist(data[:, ifeature], bins=100)
         if labels is not None:
             axs[icol][irow].set_xlabel(labels[ifeature])
 
@@ -79,7 +82,7 @@ def plot_feature_histograms(data, labels: list[str]|None = None) -> Figure:
     return fig
 
 
-def plot_true_nz(targets) -> Figure:
+def plot_true_nz(targets: np.ndarray) -> Figure:
     """Plot the true NZ
 
     Parameters
@@ -98,7 +101,9 @@ def plot_true_nz(targets) -> Figure:
     return fig
 
 
-def plot_pca_hist2d(data, pca_out, labels: list[str]|None = None) -> Figure:
+def plot_pca_hist2d(
+    data: np.ndarray, pca_out: np.ndarray, labels: list[str] | None = None
+) -> Figure:
     """Plot input data v. principle componment analysis features
 
     Parameters
@@ -129,17 +134,21 @@ def plot_pca_hist2d(data, pca_out, labels: list[str]|None = None) -> Figure:
     axs = fig.subplots(nrow, ncol)
 
     for irow in range(nrow):
-        row_data = data[:,irow]
+        row_data = data[:, irow]
         for icol in range(ncol):
-            col_data = pca_out[:,icol]
-            axs[irow][icol].hist2d(row_data, col_data, bins=(100, 100), norm='log', cmap='gray')
+            col_data = pca_out[:, icol]
+            axs[irow][icol].hist2d(
+                row_data, col_data, bins=(100, 100), norm="log", cmap="gray"
+            )
         if labels is not None:
-            axs[irow][0].set_xlabel(labels[ifeature])
+            axs[irow][0].set_xlabel(labels[irow])
     fig.tight_layout()
     return fig
 
 
-def plot_feature_target_hist2d(data, targets, labels: list[str]|None = None) -> Figure:
+def plot_feature_target_hist2d(
+    data: np.ndarray, targets: np.ndarray, labels: list[str] | None = None
+) -> Figure:
     """Plot input data v. target redshift value as 2D histogram
 
     Parameters
@@ -171,14 +180,18 @@ def plot_feature_target_hist2d(data, targets, labels: list[str]|None = None) -> 
         icol = int(ifeature / ncol)
         irow = ifeature % ncol
 
-        axs[icol][irow].hist2d(targets, data[:,ifeature], bins=100, norm='log', cmap='gray')
+        axs[icol][irow].hist2d(
+            targets, data[:, ifeature], bins=100, norm="log", cmap="gray"
+        )
         if labels is not None:
-            axs[icol][irow].set_xlabel(labels[ifeature])
+            axs[icol][irow].set_xlabel(labels[irow])
     fig.tight_layout()
     return fig
 
 
-def plot_features_target_scatter(data, targets, labels: list[str]|None = None) -> Figure:
+def plot_features_target_scatter(
+    data: np.ndarray, targets: np.ndarray, labels: list[str] | None = None
+) -> Figure:
     """Plot input data v. target redshift value as scatter plot
 
     Parameters
@@ -209,14 +222,19 @@ def plot_features_target_scatter(data, targets, labels: list[str]|None = None) -
         irow = int(ifeature / ncol)
         icol = ifeature % ncol
 
-        axs[irow][icol].scatter(targets, data[:,ifeature], marker='.', s=1)
+        axs[irow][icol].scatter(targets, data[:, ifeature], marker=".", s=1)
         if labels is not None:
             axs[irow][0].set_ylabel(labels[ifeature])
     fig.tight_layout()
     return fig
 
 
-def plot_features_pca_scatter(data, pca_out, targets, labels: list[str]|None = None) -> Figure:
+def plot_features_pca_scatter(
+    data: np.ndarray,
+    pca_out: np.ndarray,
+    targets: np.ndarray,
+    labels: list[str] | None = None,
+) -> Figure:
     """Plot input data v. pca with target redshift as color
 
     Parameters
@@ -248,18 +266,18 @@ def plot_features_pca_scatter(data, pca_out, targets, labels: list[str]|None = N
     axs = fig.subplots(nrow, ncol)
 
     for irow in range(nrow):
-        row_data = data[:,irow]
+        row_data = data[:, irow]
         for icol in range(ncol):
-            axs[irow][icol].scatter(row_data, pca_out[:,icol], c=targets, marker='.', s=1)
+            axs[irow][icol].scatter(
+                row_data, pca_out[:, icol], c=targets, marker=".", s=1
+            )
             if labels is not None:
-                axs[irow][0].set_xlabel(labels[ifeature])
+                axs[irow][0].set_xlabel(labels[irow])
     fig.tight_layout()
     return fig
 
 
-
-
-def plot_true_predict_simple(targets, predictions) -> Figure:
+def plot_true_predict_simple(targets: np.ndarray, predictions: np.ndarray) -> Figure:
     """Plot predicted redshift v. true redshift as a 2d histogram
 
     Parameters
@@ -276,31 +294,62 @@ def plot_true_predict_simple(targets, predictions) -> Figure:
     """
     fig = plt.figure(figsize=(8, 8))
     ax = fig.subplots(1, 1)
-    ax.hist2d(targets, predictions, bins=(100, 100), norm='log', cmap='gray')
+    ax.hist2d(targets, predictions, bins=(100, 100), norm="log", cmap="gray")
     return fig
 
 
-def get_biweight_mean_sigma_outlier(subset: np.ndarray, nclip: int=3) -> tuple[float, float, float, float]:
-    subset_clip, _, _ = sigmaclip(subset, low=3, high=3)
+def get_biweight_mean_sigma_outlier(
+    subset: np.ndarray, nclip: int = 3
+) -> tuple[float, float, float, float]:
+    """Return biweight stats with sigma clipping
+
+    Parameters
+    ----------
+    subset:
+        Input data, estimate - reference redshifts
+
+    nclip:
+        Value for sigma clipping
+
+    Returns
+    -------
+    Mean, error on mean, std, outlier_rate
+    """
+
+    subset_clip, _, _ = sigmaclip(subset, low=nclip, high=nclip)
     for _j in range(nclip):
-        subset_clip, _, _ = sigmaclip(subset_clip, low=3, high=3)
+        subset_clip, _, _ = sigmaclip(subset_clip, low=nclip, high=nclip)
 
     mean = biweight_location(subset_clip)
     std = biweight_scale(subset_clip)
-    outlier_rate = np.sum(np.abs(subset) > 3 * biweight_scale(subset_clip)) / len(
+    outlier_rate = np.sum(np.abs(subset) > nclip * biweight_scale(subset_clip)) / len(
         subset
     )
 
     return mean, std / np.sqrt(len(subset_clip)), std, outlier_rate
 
 
-def plot_true_predict_fancy(targets, predictions) -> Figure:
-    z_min = 0.
-    z_max = 3.
+def plot_true_predict_fancy(targets: np.ndarray, predictions: np.ndarray) -> Figure:
+    """Plot predicted redshift v. true redshift as with nice overlayes
+
+    Parameters
+    ----------
+    targets:
+        Target redshifts [N_objects]
+
+    predictions:
+        Predicted redshifts [N_objects]
+
+    Returns
+    -------
+    Figure with requested plots and nice overlays
+    """
+    z_min = 0.0
+    z_max = 3.0
     figure, axes = plt.subplots(figsize=(7, 6))
-    bin_edges = np.linspace(0, 3., 301)
+    bin_edges = np.linspace(0, 3.0, 301)
     dz = (predictions - targets) / (1 + targets)
-    mean, mean_err, std, outlier_rate = get_biweight_mean_sigma_outlier(dz, nclip=3)
+    mean, _mean_err, std, outlier_rate = get_biweight_mean_sigma_outlier(dz, nclip=3)
     mean, std, outlier_rate = round(mean, 4), round(std, 4), round(outlier_rate, 4)
     h = axes.hist2d(
         targets,
@@ -346,31 +395,66 @@ def plot_true_predict_fancy(targets, predictions) -> Figure:
 
     plt.legend()
     figure.tight_layout()
+    return figure
 
 
 def plot_colors_v_redshifts_with_templates(
     redshifts: np.ndarray,
-    colors: np.ndarray,
-    zmax: float=4.0,
-    templates: dict|None=None,
-    labels: list[str]|None=None,
+    color_data: np.ndarray,
+    zmax: float = 4.0,
+    templates: dict | None = None,
+    labels: list[str] | None = None,
 ) -> Figure:
+    """Plot colors v. redshift with overlaid template tracks
+
+    Parameters
+    ----------
+    redshifts:
+        Redshifts [N_objects]
+
+    color_data:
+        Color data [N_colors, N_objects]
+
+    zmax:
+        Maximum redshift for templates
+
+    templates:
+        Dictionary of templates to plot
+
+    labels:
+        Labels for the data columns [N_features]
+
+    Returns
+    -------
+    Figure with requested plots and nice overlays
+    """
 
     fig = plt.figure(figsize=(8, 8))
-    n_colors = colors.shape[-1]
+    n_colors = color_data.shape[-1]
     nrow, ncol = get_subplot_nrow_ncol(n_colors)
     axs = fig.subplots(nrow, ncol)
 
     for icolor in range(n_colors):
         icol = int(icolor / ncol)
         irow = icolor % ncol
-        axs[icol][irow].hist2d(redshifts, colors[:,icolor], bins=[np.linspace(0, zmax, 121), np.linspace(-3, 3, 121)], cmap='gray', norm='log')
+        axs[icol][irow].hist2d(
+            redshifts,
+            color_data[:, icolor],
+            bins=[np.linspace(0, zmax, 121), np.linspace(-3, 3, 121)],
+            cmap="gray",
+            norm="log",
+        )
         axs[icol][irow].set_xlim(0, zmax)
-        axs[icol][irow].set_ylim(-3., 3.)
+        axs[icol][irow].set_ylim(-3.0, 3.0)
         if templates is not None:
             for key, val in templates.items():
                 mask = val[0] < zmax
-                _ = axs[icol][irow].plot(val[0][mask], val[2][icolor][mask], label=key, c=cm.rainbow(1.-val[3]/len(templates)))
+                _ = axs[icol][irow].plot(
+                    val[0][mask],
+                    val[2][icolor][mask],
+                    label=key,
+                    c=cm.rainbow(1.0 - val[3] / len(templates)),
+                )
         # axs[icol][irow].legend()
         axs[icol][irow].set_xlabel("redshift")
         if labels is not None:
@@ -381,32 +465,58 @@ def plot_colors_v_redshifts_with_templates(
 
 
 def plot_colors_v_colors_with_templates(
-    redshifts: np.ndarray,
-    colors: np.ndarray,
-    zmax: float=4.0,
-    templates: dict|None=None,
-    labels: list[str]|None=None,
+    color_data: np.ndarray,
+    zmax: float = 4.0,
+    templates: dict | None = None,
+    labels: list[str] | None = None,
 ) -> Figure:
+    """Plot colors v. colors with overlaid template tracks
+
+    Parameters
+    ----------
+    color_data:
+        Color data [N_colors, N_objects]
+
+    zmax:
+        Maximum redshift for templates
+
+    templates:
+        Dictionary of templates to plot
+
+    labels:
+        Labels for the data columns [N_features]
+
+    Returns
+    -------
+    Figure with requested plots and nice overlays
+    """
 
     fig = plt.figure(figsize=(8, 8))
-    n_colors = colors.shape[-1]
-    nrow, ncol = n_colors-1, n_colors-1
+    n_colors = color_data.shape[-1]
+    nrow, ncol = n_colors - 1, n_colors - 1
     axs = fig.subplots(nrow, ncol)
 
-    for icol in range(n_colors-1):
-        for irow in range(n_colors-1):
-            axs[icol][irow].set_xlim(-3., 3.)
-            axs[icol][irow].set_ylim(-3., 3.)
+    for icol in range(n_colors - 1):
+        for irow in range(n_colors - 1):
+            axs[icol][irow].set_xlim(-3.0, 3.0)
+            axs[icol][irow].set_ylim(-3.0, 3.0)
             if labels is not None:
                 axs[icol][irow].set_ylabel(labels[icol])
-                axs[icol][irow].set_xlabel(labels[irow+1])
+                axs[icol][irow].set_xlabel(labels[irow + 1])
             if irow < icol:
                 continue
-            axs[icol][irow].scatter(colors[:,icol], colors[:,irow+1], color='black', s=1)
+            axs[icol][irow].scatter(
+                color_data[:, icol], color_data[:, irow + 1], color="black", s=1
+            )
             if templates is not None:
                 for key, val in templates.items():
                     mask = val[0] < zmax
-                    _ = axs[icol][irow].plot(val[2][icol][mask], val[2][irow+1][mask], label=key, c=cm.rainbow(1.-val[3]/len(templates)))
+                    _ = axs[icol][irow].plot(
+                        val[2][icol][mask],
+                        val[2][irow + 1][mask],
+                        label=key,
+                        c=cm.rainbow(1.0 - val[3] / len(templates)),
+                    )
             # axs[icol][irow].legend()
     fig.tight_layout()
     return fig
@@ -415,10 +525,10 @@ def plot_colors_v_colors_with_templates(
 def process_data(
     zphot: np.ndarray,
     specz: np.ndarray,
-    low: float=0.01,
-    high: float=2.,
-    nclip: int=3,
-    nbin: int=101,
+    low: float = 0.01,
+    high: float = 2.0,
+    nclip: int = 3,
+    nbin: int = 101,
 ) -> dict[str, list[float]]:
     dz = (zphot - specz) / (1 + specz)
 
@@ -448,9 +558,9 @@ def process_data(
         biweight_std.append(biweight_scale(subset_clip) / np.sqrt(len(subset_clip)))
         biweight_sigma.append(biweight_scale(subset_clip))
 
-        outlier_rate = np.sum(
-            np.abs(subset) > 3 * biweight_scale(subset_clip)
-        ) / len(subset)
+        outlier_rate = np.sum(np.abs(subset) > 3 * biweight_scale(subset_clip)) / len(
+            subset
+        )
         biweight_outlier.append(outlier_rate)
 
         qt_95_low.append(np.percentile(subset, 2.5))
@@ -477,8 +587,8 @@ def process_data(
 def plot_biweight_stats_v_redshift(targets, predictions) -> Figure:
 
     n_zbins = 100
-    z_min = 0.
-    z_max = 3.
+    z_min = 0.0
+    z_max = 3.0
     n_clip = 3
 
     dz = (predictions - targets) / (1 + targets)
@@ -504,12 +614,8 @@ def plot_biweight_stats_v_redshift(targets, predictions) -> Figure:
 
     axes[0].plot(results["z_mean"], results["biweight_sigma"], label=r"$\sigma_z$")
 
-    axes[0].plot(
-        results["z_mean"], results["biweight_outlier"], label=r"Outlier rate"
-    )
-    axes[0].set_title(
-        f"Bias, Sigma, and Outlier rates w/ {n_clip} sigma clipping"
-    )
+    axes[0].plot(results["z_mean"], results["biweight_outlier"], label=r"Outlier rate")
+    axes[0].set_title(f"Bias, Sigma, and Outlier rates w/ {n_clip} sigma clipping")
     axes[0].set_ylabel("Statistics")
     axes[0].legend()
     axes[0].tick_params(
@@ -529,15 +635,12 @@ def plot_biweight_stats_v_redshift(targets, predictions) -> Figure:
 
     axes[1].set_xlim(z_min, z_max)
     for qt in ["qt_95_low", "qt_68_low", "median", "qt_68_high", "qt_95_high"]:
-        axes[1].plot(
-            results["z_mean"], results[qt], "--", color="blue", linewidth=2.0
-        )
+        axes[1].plot(results["z_mean"], results[qt], "--", color="blue", linewidth=2.0)
 
     axes[1].set_xlabel("Redshift")
     axes[1].set_ylabel(r"$(z_{phot} - z_{spec})/(1+z_{spec})$")
     figure.tight_layout()
     return figure
-
 
 
 def plot_mag_spectra(
@@ -555,82 +658,136 @@ def plot_mag_spectra(
     return figure
 
 
-def plot_mag_mag_scatter(t1, t2, bands, mask=None, norm='log'):
+def plot_mag_mag_scatter(t1, t2, bands, mask=None, norm="log"):
     fig = plt.figure()
     axes = fig.subplots(2, 2)
     for i, band in enumerate(bands):
-        icol = i%2
-        irow = int(i/2)
+        icol = i % 2
+        irow = int(i / 2)
         axs = axes[irow][icol]
         if mask is None:
-            axs.hist2d(t1[band], t2[band], bins=(np.linspace(16, 30, 101), np.linspace(16, 30, 101)), cmap='gray', norm='log')
+            axs.hist2d(
+                t1[band],
+                t2[band],
+                bins=(np.linspace(16, 30, 101), np.linspace(16, 30, 101)),
+                cmap="gray",
+                norm=norm,
+            )
         else:
-            axs.hist2d(t1[band][mask], t2[band][mask], bins=(np.linspace(16, 30, 101), np.linspace(16, 30, 101)), cmap='gray', norm='log')
-        axs.plot([16,30],[16,30])
-        axs.set_xlabel(f'{band} [mag]')
-        axs.set_ylabel(f'{band} [mag]')
+            axs.hist2d(
+                t1[band][mask],
+                t2[band][mask],
+                bins=(np.linspace(16, 30, 101), np.linspace(16, 30, 101)),
+                cmap="gray",
+                norm=norm,
+            )
+        axs.plot([16, 30], [16, 30])
+        axs.set_xlabel(f"{band} [mag]")
+        axs.set_ylabel(f"{band} [mag]")
     fig.tight_layout()
 
 
-def plot_mag_mag_resid(t1, t2, bands, mask=None, norm='log'):
+def plot_mag_mag_resid(t1, t2, bands, mask=None, norm="log"):
     fig = plt.figure()
     axes = fig.subplots(2, 2)
     for i, band in enumerate(bands):
-        icol = i%2
-        irow = int(i/2)
+        icol = i % 2
+        irow = int(i / 2)
         axs = axes[irow][icol]
         if mask is None:
-            axs.hist2d(t2[band], t1[band] - t2[band], bins=(np.linspace(16, 30, 101), np.linspace(-2, 2, 101)), cmap='gray', norm='log')
+            axs.hist2d(
+                t2[band],
+                t1[band] - t2[band],
+                bins=(np.linspace(16, 30, 101), np.linspace(-2, 2, 101)),
+                cmap="gray",
+                norm=norm,
+            )
         else:
-            axs.hist2d(t2[band][mask], t1[band][mask] - t2[band][mask], bins=(np.linspace(16, 30, 101), np.linspace(-2, 2, 101)), cmap='gray', norm='log')
-        axs.set_xlabel(f'{band} [mag]')
-        axs.set_ylabel(f'Delta {band} [mag]')
+            axs.hist2d(
+                t2[band][mask],
+                t1[band][mask] - t2[band][mask],
+                bins=(np.linspace(16, 30, 101), np.linspace(-2, 2, 101)),
+                cmap="gray",
+                norm=norm,
+            )
+        axs.set_xlabel(f"{band} [mag]")
+        axs.set_ylabel(f"Delta {band} [mag]")
     fig.tight_layout()
 
 
-def plot_color_scatter(t1, t2, bands, mask=None, norm='log'):
+def plot_color_scatter(t1, t2, bands, mask=None, norm="log"):
     fig = plt.figure()
     axes = fig.subplots(2, 2)
     for i, band in enumerate(bands):
-        icol = i%2
-        irow = int(i/2)
+        icol = i % 2
+        irow = int(i / 2)
         axs = axes[irow][icol]
         if mask is None:
-            axs.hist2d(t1[band], t2[band], bins=(np.linspace(-0.5, 2.0, 101), np.linspace(-0.5, 2.0, 101)), cmap='gray', norm=norm)
+            axs.hist2d(
+                t1[band],
+                t2[band],
+                bins=(np.linspace(-0.5, 2.0, 101), np.linspace(-0.5, 2.0, 101)),
+                cmap="gray",
+                norm=norm,
+            )
         else:
-            axs.hist2d(t1[band][mask], t2[band][mask], bins=(np.linspace(-0.5, 2.0, 101), np.linspace(-0.5, 2.0, 101)), cmap='gray', norm=norm)
-        axs.set_xlabel(f'{band} [mag]')
-        axs.set_ylabel(f'{band} [mag]')
+            axs.hist2d(
+                t1[band][mask],
+                t2[band][mask],
+                bins=(np.linspace(-0.5, 2.0, 101), np.linspace(-0.5, 2.0, 101)),
+                cmap="gray",
+                norm=norm,
+            )
+        axs.set_xlabel(f"{band} [mag]")
+        axs.set_ylabel(f"{band} [mag]")
     fig.tight_layout()
 
 
-def plot_color_resid(t1, t2, bands, mask=None, norm='log'):
+def plot_color_resid(t1, t2, bands, mask=None, norm="log"):
     fig = plt.figure()
     axes = fig.subplots(2, 2)
     for i, band in enumerate(bands):
-        icol = i%2
-        irow = int(i/2)
+        icol = i % 2
+        irow = int(i / 2)
         axs = axes[irow][icol]
-        if mask is None:                
-            axs.hist2d(t2[band], t1[band] - t2[band], bins=(np.linspace(-0.5, 2.0, 101), np.linspace(-1.0, 1.0, 101)), cmap='gray', norm=norm)
+        if mask is None:
+            axs.hist2d(
+                t2[band],
+                t1[band] - t2[band],
+                bins=(np.linspace(-0.5, 2.0, 101), np.linspace(-1.0, 1.0, 101)),
+                cmap="gray",
+                norm=norm,
+            )
         else:
-            axs.hist2d(t2[band][mask], (t1[band] - t2[band])[mask], bins=(np.linspace(-0.5, 2.0, 101), np.linspace(-1.0, 1.0, 101)), cmap='gray', norm=norm)
-        axs.set_xlabel(f'{band} [mag]')
-        axs.set_ylabel(f'Delta {band} [mag]')
+            axs.hist2d(
+                t2[band][mask],
+                (t1[band] - t2[band])[mask],
+                bins=(np.linspace(-0.5, 2.0, 101), np.linspace(-1.0, 1.0, 101)),
+                cmap="gray",
+                norm=norm,
+            )
+        axs.set_xlabel(f"{band} [mag]")
+        axs.set_ylabel(f"Delta {band} [mag]")
     fig.tight_layout()
-    
-    
+
+
 def plot_DESI_scatter(t, flux_type, bands):
     fig = plt.figure()
     axes = fig.subplots(2, 2)
     for i, band in enumerate(bands):
-        icol = i%2
-        irow = int(i/2)
+        icol = i % 2
+        irow = int(i / 2)
         axs = axes[irow][icol]
-        axs.hist2d(t[f"{band}_{flux_type}Mag"], t[f'{band}_DESI'], bins=(np.linspace(16, 26, 101), np.linspace(16, 26, 101)), cmap='gray', norm='log')
-        axs.plot([16,26],[16,26])
-        axs.set_xlabel(f'{band} {flux_type} [mag]')
-        axs.set_ylabel(f'{band} DESI [mag]')
+        axs.hist2d(
+            t[f"{band}_{flux_type}Mag"],
+            t[f"{band}_DESI"],
+            bins=(np.linspace(16, 26, 101), np.linspace(16, 26, 101)),
+            cmap="gray",
+            norm="log",
+        )
+        axs.plot([16, 26], [16, 26])
+        axs.set_xlabel(f"{band} {flux_type} [mag]")
+        axs.set_ylabel(f"{band} DESI [mag]")
     fig.tight_layout()
 
 
@@ -638,12 +795,17 @@ def plot_DESI_resid(t, flux_type, bands):
     fig = plt.figure()
     axes = fig.subplots(2, 2)
     for i, band in enumerate(bands):
-        icol = i%2
-        irow = int(i/2)
+        icol = i % 2
+        irow = int(i / 2)
         axs = axes[irow][icol]
-        axs.hist2d(t[f"{band}_{flux_type}Mag"], t[f'{band}_DESI']-t[f"{band}_{flux_type}Mag"], bins=(np.linspace(16, 26, 101), np.linspace(-2, 2, 101)), cmap='gray', norm='log')
-        axs.plot([16,26],[16,26])
-        axs.set_xlabel(f'{band} {flux_type} [mag]')
-        axs.set_ylabel(f'{band} DESI [mag]')
+        axs.hist2d(
+            t[f"{band}_{flux_type}Mag"],
+            t[f"{band}_DESI"] - t[f"{band}_{flux_type}Mag"],
+            bins=(np.linspace(16, 26, 101), np.linspace(-2, 2, 101)),
+            cmap="gray",
+            norm="log",
+        )
+        axs.plot([16, 26], [16, 26])
+        axs.set_xlabel(f"{band} {flux_type} [mag]")
+        axs.set_ylabel(f"{band} DESI [mag]")
     fig.tight_layout()
-    
