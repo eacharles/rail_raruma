@@ -154,3 +154,16 @@ def r_90_sersic_arcsec(
     r_90 / r_50 = 1.25 + 1.125 * n
     """
     return LSST_PIXEL_SIZE * r * (1.25 + 1.125 * n)
+
+
+
+def pix_to_radians(pix):
+    return np.radians(LSST_PIXEL_SIZE*pix/3600)
+
+
+def mag_to_dL(mag, abs_mag=20):
+    return np.power(10, 1+(mag+abs_mag)/5)
+
+
+def pix_to_dA(pix, size=5e3):
+    return size/pix_to_radians(pix)

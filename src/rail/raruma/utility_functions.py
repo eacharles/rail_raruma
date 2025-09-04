@@ -40,6 +40,85 @@ def extract_data_to_2d_array(data: Any, column_names: list[str]) -> np.ndarray:
     return np.vstack(column_data).T
 
 
+def make_mag_dict(
+    data: np.ndarray,
+    band_name_template: str,
+    bands: list[str],
+) -> dict[str, np.ndarray]:
+    """Extract magntidues from a table to a dict of numpy arrays
+
+    Parameters
+    ----------
+    data:
+        Input data
+    
+    band_name_template:
+        Template to make the names
+    
+    bands:
+        List of the bands to apply to the template
+        
+    Returns
+    -------
+    Output dict
+    """    
+    mag_dict = {}
+    for band_ in bands:
+        col = band_name_template.format(band=band_)
+        mags = fluxes_to_mags(data[col].to_numpy())
+        mag_dict[band_] = mags
+    return mag_dict
+
+
+def make_colors(
+    data: np.ndarray,
+    band_name_template: str,
+    bands: list[str],
+) -> dict[str, np.ndarray]:
+    colors = {}
+    for i, band_ in enumerate(bands[0:-1]):
+        col_a = band_name_template.format(band=band_)
+        col_b = band_name_template.format(band=bands[i+1])
+        colors[f"{band_}-{bands[i+1]}"] = data[col_a] - data[col_b]
+    return colors
+    
+
+def make_color_dict(
+    data: np.ndarray,
+    band_name_template: str,
+    bands: list[str],
+) -> dict[str, np.ndarray]:
+    """Extract colors from a table to a dict of numpy arrays
+
+    Parameters
+    ----------
+    data:
+        Input data
+    
+    band_name_template:
+        Template to make the names
+    
+    bands:
+        List of the bands to apply to the template
+        
+    Returns
+    -------
+    Output dict
+    """
+    colors = {}
+    for i, band_ in enumerate(bands[0:-1]):
+        col_a = band_name_template.format(band=band_)
+        col_b = band_name_template.format(band=bands[i+1])
+        try:
+            mag_a = fluxes_to_mags(data[col_a].to_numpy())
+            mag_b = fluxes_to_mags(data[col_b].to_numpy())
+        except AttributeError:
+            mag_a = fluxes_to_mags(data[col_a])
+            mag_b = fluxes_to_mags(data[col_b])
+        colors[f"{band_}-{bands[i+1]}"] = mag_a - mag_b
+    return colors
+
+
 def get_band_values(
     input_data: np.ndarray,
     band_name_template: str,
@@ -52,7 +131,7 @@ def get_band_values(
     input_data:
         Input data
 
-    template:
+    band_name_template:
         Template to make the names
     
     bands:
@@ -67,7 +146,7 @@ def get_band_values(
     return values
 
 
-def fluxes_to_mags(fluxes: np.ndarray, zero_points: float|np.ndarray) -> np.ndarray:    
+def fluxes_to_mags(fluxes: np.ndarray, zero_points: float|np.ndarray=31.4) -> np.ndarray:    
     """Convert fluxes to magnitudes
 
     Parameters
@@ -85,7 +164,7 @@ def fluxes_to_mags(fluxes: np.ndarray, zero_points: float|np.ndarray) -> np.ndar
     return -2.5 * np.log10(fluxes) + zero_points
         
 
-def mags_to_fluxes(mags: np.ndarray, zero_points: float|np.ndarray) -> np.ndarray:    
+def mags_to_fluxes(mags: np.ndarray, zero_points: float|np.ndarray=31.4) -> np.ndarray:    
     """Convert magnitudes to fluxes
 
     Parameters

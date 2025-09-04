@@ -553,3 +553,97 @@ def plot_mag_spectra(
         axes.errorbar(x_vals, y_, yerr_, color=cm.rainbow(target_))
     figure.tight_layout()
     return figure
+
+
+def plot_mag_mag_scatter(t1, t2, bands, mask=None, norm='log'):
+    fig = plt.figure()
+    axes = fig.subplots(2, 2)
+    for i, band in enumerate(bands):
+        icol = i%2
+        irow = int(i/2)
+        axs = axes[irow][icol]
+        if mask is None:
+            axs.hist2d(t1[band], t2[band], bins=(np.linspace(16, 30, 101), np.linspace(16, 30, 101)), cmap='gray', norm='log')
+        else:
+            axs.hist2d(t1[band][mask], t2[band][mask], bins=(np.linspace(16, 30, 101), np.linspace(16, 30, 101)), cmap='gray', norm='log')
+        axs.plot([16,30],[16,30])
+        axs.set_xlabel(f'{band} [mag]')
+        axs.set_ylabel(f'{band} [mag]')
+    fig.tight_layout()
+
+
+def plot_mag_mag_resid(t1, t2, bands, mask=None, norm='log'):
+    fig = plt.figure()
+    axes = fig.subplots(2, 2)
+    for i, band in enumerate(bands):
+        icol = i%2
+        irow = int(i/2)
+        axs = axes[irow][icol]
+        if mask is None:
+            axs.hist2d(t2[band], t1[band] - t2[band], bins=(np.linspace(16, 30, 101), np.linspace(-2, 2, 101)), cmap='gray', norm='log')
+        else:
+            axs.hist2d(t2[band][mask], t1[band][mask] - t2[band][mask], bins=(np.linspace(16, 30, 101), np.linspace(-2, 2, 101)), cmap='gray', norm='log')
+        axs.set_xlabel(f'{band} [mag]')
+        axs.set_ylabel(f'Delta {band} [mag]')
+    fig.tight_layout()
+
+
+def plot_color_scatter(t1, t2, bands, mask=None, norm='log'):
+    fig = plt.figure()
+    axes = fig.subplots(2, 2)
+    for i, band in enumerate(bands):
+        icol = i%2
+        irow = int(i/2)
+        axs = axes[irow][icol]
+        if mask is None:
+            axs.hist2d(t1[band], t2[band], bins=(np.linspace(-0.5, 2.0, 101), np.linspace(-0.5, 2.0, 101)), cmap='gray', norm=norm)
+        else:
+            axs.hist2d(t1[band][mask], t2[band][mask], bins=(np.linspace(-0.5, 2.0, 101), np.linspace(-0.5, 2.0, 101)), cmap='gray', norm=norm)
+        axs.set_xlabel(f'{band} [mag]')
+        axs.set_ylabel(f'{band} [mag]')
+    fig.tight_layout()
+
+
+def plot_color_resid(t1, t2, bands, mask=None, norm='log'):
+    fig = plt.figure()
+    axes = fig.subplots(2, 2)
+    for i, band in enumerate(bands):
+        icol = i%2
+        irow = int(i/2)
+        axs = axes[irow][icol]
+        if mask is None:                
+            axs.hist2d(t2[band], t1[band] - t2[band], bins=(np.linspace(-0.5, 2.0, 101), np.linspace(-1.0, 1.0, 101)), cmap='gray', norm=norm)
+        else:
+            axs.hist2d(t2[band][mask], (t1[band] - t2[band])[mask], bins=(np.linspace(-0.5, 2.0, 101), np.linspace(-1.0, 1.0, 101)), cmap='gray', norm=norm)
+        axs.set_xlabel(f'{band} [mag]')
+        axs.set_ylabel(f'Delta {band} [mag]')
+    fig.tight_layout()
+    
+    
+def plot_DESI_scatter(t, flux_type, bands):
+    fig = plt.figure()
+    axes = fig.subplots(2, 2)
+    for i, band in enumerate(bands):
+        icol = i%2
+        irow = int(i/2)
+        axs = axes[irow][icol]
+        axs.hist2d(t[f"{band}_{flux_type}Mag"], t[f'{band}_DESI'], bins=(np.linspace(16, 26, 101), np.linspace(16, 26, 101)), cmap='gray', norm='log')
+        axs.plot([16,26],[16,26])
+        axs.set_xlabel(f'{band} {flux_type} [mag]')
+        axs.set_ylabel(f'{band} DESI [mag]')
+    fig.tight_layout()
+
+
+def plot_DESI_resid(t, flux_type, bands):
+    fig = plt.figure()
+    axes = fig.subplots(2, 2)
+    for i, band in enumerate(bands):
+        icol = i%2
+        irow = int(i/2)
+        axs = axes[irow][icol]
+        axs.hist2d(t[f"{band}_{flux_type}Mag"], t[f'{band}_DESI']-t[f"{band}_{flux_type}Mag"], bins=(np.linspace(16, 26, 101), np.linspace(-2, 2, 101)), cmap='gray', norm='log')
+        axs.plot([16,26],[16,26])
+        axs.set_xlabel(f'{band} {flux_type} [mag]')
+        axs.set_ylabel(f'{band} DESI [mag]')
+    fig.tight_layout()
+    
