@@ -5,7 +5,7 @@ from . import utility_functions as raruma_util
 def make_admixture(
     mags: np.ndarray,
     library: np.ndarray,
-    admixture: float,
+    admixture: float=0.01,
     zero_points: float = 31.4,
     seed: int | None = None,
 ) -> np.ndarray:
@@ -36,6 +36,8 @@ def make_admixture(
     n_obj = len(mags)
 
     fluxes = raruma_util.mags_to_fluxes(mags, zero_points)
+    lib_fluxes = raruma_util.mags_to_fluxes(library, zero_points)
+    lib_fluxes = np.nan_to_num(lib_fluxes)
 
     total_fluxes = fluxes.sum(axis=1)
 
@@ -43,7 +45,7 @@ def make_admixture(
         np.random.seed(seed)
 
     picks = np.random.randint(n_lib, size=n_obj)
-    pick_fluxes = fluxes[picks]
+    pick_fluxes = lib_fluxes[picks]
     pick_totals = pick_fluxes.sum(axis=1)
 
     pick_weights = total_fluxes / pick_totals
