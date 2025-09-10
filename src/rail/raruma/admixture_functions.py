@@ -55,3 +55,40 @@ def make_admixture(
     new_mags = raruma_util.fluxes_to_mags(new_fluxes, zero_points)
 
     return new_mags
+
+
+def gaussian_noise(
+    mags: np.ndarray,
+    noise_levels: np.ndarray,
+    seed: int | None = None,
+) -> np.ndarray:
+    """Add noise of fluxes to objects
+
+    Parameters
+    ----------
+    mags:
+        Input mags [N_bands, N_objects]
+
+    noise_levels:
+        Noise levels (in mags)
+
+    seed:
+        Random number seed
+
+    Returns
+    -------
+    Magnitudes with noise added
+    """
+    n_obj = len(mags)
+    n_mags = mags.shape[-1]
+    
+    if seed is not None:
+        np.random.seed(seed)
+
+    mag_list = []
+    for i, noise_level in enumerate(noise_levels):
+        noise = random_array = np.random.normal(loc=0, scale=noise_level, size=n_obj)
+        mag_list.append(mags[:,i] + noise)
+
+    new_mags = np.vstack(mag_list)
+    return new_mags
